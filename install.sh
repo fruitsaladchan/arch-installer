@@ -1,8 +1,5 @@
 #!/bin/bash
 
-exec > >(tee -i archsetup.txt)
-exec 2>&1
-
 echo -ne "
 =========================================================================
                     Personal Arch Linux Installer Script
@@ -604,7 +601,7 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
                   Installing usefull packages
 =========================================================================
 "
-pacman -S fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop
 echo "  installing usefull tools"
 
 "
