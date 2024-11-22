@@ -547,20 +547,19 @@ sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 echo -e "Installing Grub theme..."
 THEME_DIR="/usr/share/grub/themes/"
 echo -e "Creating the theme directory..."
-mkdir -pv "${THEME_DIR}"
+mkdir -pv "\${THEME_DIR}"
 
-# Clone the theme
-cd "${THEME_DIR}" || exit
+cd "\${THEME_DIR}" || exit
 git clone https://github.com/13atm01/GRUB-Theme.git
 mv GRUB-Theme/Touhou\ Project/Touhou-project/ .
 rm -rf GRUB-Theme 
 
-echo "Theme has been cloned to ${THEME_DIR}"
+echo "Theme has been cloned to \${THEME_DIR}"
 echo -e "Backing up Grub config..."
 cp -an /etc/default/grub /etc/default/grub.bak
 echo -e "Setting the theme as the default..."
 grep "GRUB_THEME=" /etc/default/grub 2>&1 >/dev/null && sed -i '/GRUB_THEME=/d' /etc/default/grub
-echo "GRUB_THEME=\"${THEME_DIR}/Touhou-project/theme.txt\"" >> /etc/default/grub
+echo "GRUB_THEME=\"\${THEME_DIR}/Touhou-project/theme.txt\"" >> /etc/default/grub
 echo -e "Updating grub..."
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
