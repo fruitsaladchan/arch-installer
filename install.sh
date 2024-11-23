@@ -600,8 +600,10 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
                   Installing usefull packages
 =========================================================================
 "
-pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop xdg-user-dirs
 echo "  installing usefull tools"
+xdg-user-dirs-update
+echo "  finished"
 
 "
 EOF
