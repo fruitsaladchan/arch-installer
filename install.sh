@@ -1,5 +1,4 @@
 #!/bin/bash
-
 clear
 
 echo -ne "
@@ -11,7 +10,7 @@ Checking Arch Linux ISO.....
 
 "
 if [ ! -f /usr/bin/pacstrap ]; then
-    echo "This script must be run from an Arch Linux ISO environment."
+    echo "script must be run from an arch ISO environment."
     exit 1
 fi
 
@@ -24,7 +23,7 @@ root_check() {
 
 arch_check() {
     if [[ ! -e /etc/arch-release ]]; then
-        echo -ne "ERROR! This script must be run in Arch Linux!\n"
+        echo -ne "ERROR! This script is for Arch Linux!\n"
         exit 0
     fi
 }
@@ -32,7 +31,6 @@ arch_check() {
 pacman_check() {
     if [[ -f /var/lib/pacman/db.lck ]]; then
         echo "ERROR! Pacman is blocked."
-        echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
         exit 0
     fi
 }
@@ -193,48 +191,61 @@ echo -ne "
 }
 
 userinfo () {
+    echo -ne "
+=========================================================================
+                    User Configuration
+=========================================================================
+"
     while true
     do
-            read -r -p "Please enter username: " username
-            if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
-            then
-                    break
-            fi
-            echo "Incorrect username."
+        read -r -p "
+    Please enter username: " username
+        if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
+        then
+            break
+        fi
+        echo "    Incorrect username."
     done
     export USERNAME=$username
 
     while true
     do
-        read -rs -p "Please enter password: " PASSWORD1
         echo -ne "\n"
-        read -rs -p "Please re-enter password: " PASSWORD2
+        read -rs -p "    Please enter password: " PASSWORD1
+        echo -ne "\n"
+        read -rs -p "    Please re-enter password: " PASSWORD2
         echo -ne "\n"
         if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
             break
         else
-            echo -ne "ERROR! Passwords do not match. \n"
+            echo -ne "    ERROR! Passwords do not match. \n"
         fi
     done
     export PASSWORD=$PASSWORD1
 
     while true
     do
-            read -r -p "name your machine: " name_of_machine
-            if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
-            then
-                    break
-            fi
-            read -r -p "Hostname doesn't seem correct. Do you to force save it? (y/n)" force
-            if [[ "${force,,}" = "y" ]]
-            then
-                    break
-            fi
+        echo -ne "\n"
+        read -r -p "    Enter hostname: " name_of_machine
+        if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
+        then
+            break
+        fi
+        read -r -p "    Hostname doesn't seem correct. Force save it? (y/n) " force
+        if [[ "${force,,}" = "y" ]]
+        then
+            break
+        fi
     done
     export NAME_OF_MACHINE=$name_of_machine
 }
 
 swapsize () {
+    echo -ne "
+=========================================================================
+                    Swap Configuration
+=========================================================================
+"
     echo -ne "
     Do you want to create a swap partition?
     "
@@ -243,24 +254,29 @@ swapsize () {
 
     case ${options[$?]} in
         Yes)
-            echo -ne "\nEnter swap size in GB (e.g. 4): "
+            echo -ne "\n    Enter swap size in GB (e.g. 4): "
             read -r swap_size
             if [[ $swap_size =~ ^[0-9]+$ ]]; then
                 export SWAP_SIZE=$swap_size
                 export CREATE_SWAP=true
             else
-                echo "Invalid input. Skipping swap partition creation."
+                echo "    Invalid input. Skipping swap partition creation."
                 export CREATE_SWAP=false
             fi
             ;;
         No)
             export CREATE_SWAP=false
             ;;
-        *) echo "Wrong option. Try again"; swapsize;;
+        *) echo "    Wrong option. Try again"; swapsize;;
     esac
 }
 
 desktop_env () {
+    echo -ne "
+=========================================================================
+                    Desktop Environment Selection
+=========================================================================
+"
     echo -ne "
     Select your desktop environment / window manager:
     "
@@ -292,12 +308,17 @@ desktop_env () {
             export DE="none"
             export DE_PACKAGES=""
             ;;
-        *) echo "Wrong option. Try again"; desktop_env;;
+        *) echo "    Wrong option. Try again"; desktop_env;;
     esac
 }
 
 display_manager () {
     if [[ "${DE}" != "none" ]]; then
+        echo -ne "
+=========================================================================
+                    Display Manager Selection
+=========================================================================
+"
         echo -ne "
     Select your display manager:
     "
@@ -321,7 +342,7 @@ display_manager () {
                 export DM=""
                 export DM_PACKAGES=""
                 ;;
-            *) echo "Wrong option. Try again"; display_manager;;
+            *) echo "    Wrong option. Try again"; display_manager;;
         esac
     else
         export DM=""
@@ -329,7 +350,13 @@ display_manager () {
     fi
 }
 
-# functions
+# Main installation sequence
+echo -ne "
+=========================================================================
+                    Arch Linux Installation
+=========================================================================
+"
+
 background_checks
 clear
 userinfo
