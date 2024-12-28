@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear
+
 echo -ne "
 =========================================================================
                     Personal Arch Linux Installer Script
