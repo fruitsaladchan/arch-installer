@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 
 echo -ne "
 =========================================================================
@@ -9,7 +10,7 @@ Checking Arch Linux ISO.....
 
 "
 if [ ! -f /usr/bin/pacstrap ]; then
-    echo "This script must be run from an Arch Linux ISO environment."
+    echo "script must be run from an arch ISO environment."
     exit 1
 fi
 
@@ -22,7 +23,7 @@ root_check() {
 
 arch_check() {
     if [[ ! -e /etc/arch-release ]]; then
-        echo -ne "ERROR! This script must be run in Arch Linux!\n"
+        echo -ne "ERROR! This script is for Arch Linux!\n"
         exit 0
     fi
 }
@@ -30,7 +31,6 @@ arch_check() {
 pacman_check() {
     if [[ -f /var/lib/pacman/db.lck ]]; then
         echo "ERROR! Pacman is blocked."
-        echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
         exit 0
     fi
 }
@@ -191,51 +191,181 @@ echo -ne "
 }
 
 userinfo () {
+    echo -ne "
+=========================================================================
+                    User Configuration
+=========================================================================
+"
     while true
     do
-            read -r -p "Please enter username: " username
-            if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
-            then
-                    break
-            fi
-            echo "Incorrect username."
+        read -r -p "
+    Please enter username: " username
+        if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
+        then
+            break
+        fi
+        echo "    Incorrect username."
     done
     export USERNAME=$username
 
     while true
     do
-        read -rs -p "Please enter password: " PASSWORD1
         echo -ne "\n"
-        read -rs -p "Please re-enter password: " PASSWORD2
+        read -rs -p "    Please enter password: " PASSWORD1
+        echo -ne "\n"
+        read -rs -p "    Please re-enter password: " PASSWORD2
         echo -ne "\n"
         if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
             break
         else
-            echo -ne "ERROR! Passwords do not match. \n"
+            echo -ne "    ERROR! Passwords do not match. \n"
         fi
     done
     export PASSWORD=$PASSWORD1
 
     while true
     do
-            read -r -p "name your machine: " name_of_machine
-            if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
-            then
-                    break
-            fi
-            read -r -p "Hostname doesn't seem correct. Do you to force save it? (y/n)" force
-            if [[ "${force,,}" = "y" ]]
-            then
-                    break
-            fi
+        echo -ne "\n"
+        read -r -p "    Enter hostname: " name_of_machine
+        if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
+        then
+            break
+        fi
+        read -r -p "    Hostname doesn't seem correct. Force save it? (y/n) " force
+        if [[ "${force,,}" = "y" ]]
+        then
+            break
+        fi
     done
     export NAME_OF_MACHINE=$name_of_machine
 }
 
-# functions
+swapsize () {
+    echo -ne "
+=========================================================================
+                    Swap Configuration
+=========================================================================
+"
+    echo -ne "
+    Do you want to create a swap partition?
+    "
+    options=("Yes" "No")
+    select_option "${options[@]}"
+
+    case ${options[$?]} in
+        Yes)
+            echo -ne "\n    Enter swap size in GB (e.g. 4): "
+            read -r swap_size
+            if [[ $swap_size =~ ^[0-9]+$ ]]; then
+                export SWAP_SIZE=$swap_size
+                export CREATE_SWAP=true
+            else
+                echo "    Invalid input. Skipping swap partition creation."
+                export CREATE_SWAP=false
+            fi
+            ;;
+        No)
+            export CREATE_SWAP=false
+            ;;
+        *) echo "    Wrong option. Try again"; swapsize;;
+    esac
+}
+
+desktop_env () {
+    echo -ne "
+=========================================================================
+                    Desktop Environment Selection
+=========================================================================
+"
+    echo -ne "
+    Select your desktop environment / window manager:
+    "
+    options=("KDE Plasma" "GNOME" "XFCE" "i3" "Hyprland" "None")
+    select_option "${options[@]}"
+
+    case ${options[$?]} in
+        "KDE Plasma")
+            export DE="kde"
+            export DE_PACKAGES="plasma-meta konsole dolphin ark spectacle gwenview okular plasma-wayland-session"
+            ;;
+        "GNOME")
+            export DE="gnome"
+            export DE_PACKAGES="gnome gnome-tweaks gnome-terminal"
+            ;;
+        "XFCE")
+            export DE="xfce"
+            export DE_PACKAGES="xfce4 xfce4-goodies"
+            ;;
+        "i3")
+            export DE="i3"
+            export DE_PACKAGES="i3-wm i3blocks i3lock i3status dmenu rxvt-unicode"
+            ;;
+        "Hyprland")
+            export DE="hyprland"
+            export DE_PACKAGES="hyprland waybar wofi kitty"
+            ;;
+        "None")
+            export DE="none"
+            export DE_PACKAGES=""
+            ;;
+        *) echo "    Wrong option. Try again"; desktop_env;;
+    esac
+}
+
+display_manager () {
+    if [[ "${DE}" != "none" ]]; then
+        echo -ne "
+=========================================================================
+                    Display Manager Selection
+=========================================================================
+"
+        echo -ne "
+    Select your display manager:
+    "
+        options=("GDM" "SDDM" "LightDM" "None")
+        select_option "${options[@]}"
+
+        case ${options[$?]} in
+            "GDM")
+                export DM="gdm"
+                export DM_PACKAGES="gdm"
+                ;;
+            "SDDM")
+                export DM="sddm"
+                export DM_PACKAGES="sddm"
+                ;;
+            "LightDM")
+                export DM="lightdm"
+                export DM_PACKAGES="lightdm lightdm-gtk-greeter"
+                ;;
+            "None")
+                export DM=""
+                export DM_PACKAGES=""
+                ;;
+            *) echo "    Wrong option. Try again"; display_manager;;
+        esac
+    else
+        export DM=""
+        export DM_PACKAGES=""
+    fi
+}
+
+# Main installation sequence
+echo -ne "
+=========================================================================
+                    Arch Linux Installation
+=========================================================================
+"
+
 background_checks
 clear
 userinfo
+clear
+swapsize
+clear
+desktop_env
+clear
+display_manager
 clear
 diskpart
 clear
@@ -281,7 +411,14 @@ sgdisk -a 2048 -o "${DISK}"
 
 sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' "${DISK}"
 sgdisk -n 2::+1GiB --typecode=2:ef00 --change-name=2:'EFIBOOT' "${DISK}"
-sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' "${DISK}"
+
+if [[ "${CREATE_SWAP}" == "true" ]]; then
+    sgdisk -n 3::+"${SWAP_SIZE}"GiB --typecode=3:8200 --change-name=3:'SWAP' "${DISK}"
+    sgdisk -n 4::-0 --typecode=4:8300 --change-name=4:'ROOT' "${DISK}"
+else
+    sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' "${DISK}"
+fi
+
 if [[ ! -d "/sys/firmware/efi" ]]; then 
     sgdisk -A 1:set:2 "${DISK}"
 fi
@@ -311,36 +448,62 @@ subvolumesetup () {
 
 if [[ "${DISK}" =~ "nvme" ]]; then
     partition2=${DISK}p2
-    partition3=${DISK}p3
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        partition3=${DISK}p3
+        partition4=${DISK}p4
+        root_partition=$partition4
+    else
+        partition3=${DISK}p3
+        root_partition=$partition3
+    fi
 else
     partition2=${DISK}2
-    partition3=${DISK}3
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        partition3=${DISK}3
+        partition4=${DISK}4
+        root_partition=$partition4
+    else
+        partition3=${DISK}3
+        root_partition=$partition3
+    fi
 fi
 
 if [[ "${FS}" == "btrfs" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "${partition2}"
-    mkfs.btrfs -f "${partition3}"
-    mount -t btrfs "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    mkfs.btrfs -f "${root_partition}"
+    mount -t btrfs "${root_partition}" /mnt
     subvolumesetup
 elif [[ "${FS}" == "ext4" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "${partition2}"
-    mkfs.ext4 "${partition3}"
-    mount -t ext4 "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    mkfs.ext4 "${root_partition}"
+    mount -t ext4 "${root_partition}" /mnt
 elif [[ "${FS}" == "luks" ]]; then
     mkfs.vfat -F32 "${partition2}"
-    echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat "${partition3}" -
-    echo -n "${LUKS_PASSWORD}" | cryptsetup open "${partition3}" ROOT -
-    mkfs.btrfs "${partition3}"
-    mount -t btrfs "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat "${root_partition}" -
+    echo -n "${LUKS_PASSWORD}" | cryptsetup open "${root_partition}" ROOT -
+    mkfs.btrfs "${root_partition}"
+    mount -t btrfs "${root_partition}" /mnt
     subvolumesetup
-    ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value "${partition3}")
+    ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value "${root_partition}")
 fi
 
 BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
 
 sync
 if ! mountpoint -q /mnt; then
-    echo "ERROR! Failed to mount ${partition3} to /mnt after multiple attempts."
+    echo "ERROR! Failed to mount ${root_partition} to /mnt after multiple attempts."
     exit 1
 fi
 mkdir -p /mnt/boot/efi
@@ -606,5 +769,47 @@ echo "  installing usefull tools"
 xdg-user-dirs-update
 echo "  finished"
 
+# Add swap entry to fstab if swap was created
+if [[ "${CREATE_SWAP}" == "true" ]]; then
+    SWAP_UUID=$(blkid -s UUID -o value "${partition3}")
+    echo "UUID=${SWAP_UUID} none swap sw 0 0" >> /mnt/etc/fstab
+fi
+
+echo -ne "
+=========================================================================
+                    Installing Desktop Environment
+=========================================================================
+"
+if [[ "${DE}" != "none" ]]; then
+    # Install X.org if needed
+    if [[ "${DE}" != "hyprland" ]]; then
+        pacman -S --noconfirm --needed xorg xorg-server
+    fi
+    
+    # Install chosen DE/WM
+    pacman -S --noconfirm --needed ${DE_PACKAGES}
+    
+    # Install display manager if selected
+    if [[ -n "${DM}" ]]; then
+        pacman -S --noconfirm --needed ${DM_PACKAGES}
+        systemctl enable ${DM}.service
+        echo "  Display Manager enabled"
+    fi
+    
+    # Additional packages for proper DE functionality
+    pacman -S --noconfirm --needed xdg-utils xdg-desktop-portal-gtk \
+        pipewire pipewire-pulse wireplumber \
+        network-manager-applet pavucontrol
+fi
+
+# If Hyprland was selected, install additional Wayland packages
+if [[ "${DE}" == "hyprland" ]]; then
+    pacman -S --noconfirm --needed \
+        xdg-desktop-portal-hyprland \
+        qt5-wayland qt6-wayland \
+        polkit-kde-agent
+fi
+
 "
 EOF
+
