@@ -53,7 +53,8 @@ select_option() {
         fi
 
         if [ $last_selected -eq -1 ]; then
-            echo "Please select an option using the arrow keys and Enter:"
+            echo "select an option using the arrow keys and Enter:
+            "
         fi
         for i in "${!options[@]}"; do
             if [ "$i" -eq $selected ]; then
@@ -545,7 +546,7 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
 fi
 echo -ne "
 =========================================================================
-                    Checking for low memory systems <8G
+                    Setting up swap
 =========================================================================
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
@@ -684,7 +685,7 @@ fi
 
 echo -ne "
 =========================================================================
-                    Automated Arch Linux Installer
+                    GRUB EFI Bootloader Install & Check
 =========================================================================
 
 Final Setup and Configurations
@@ -816,22 +817,13 @@ echo -ne "
 =========================================================================
 
 The installation has completed successfully!
-
-What would you like to do?
 "
-options=("Reboot" "Exit")
-select_option "${options[@]}"
 
-case ${options[$?]} in
-    "Reboot")
-        echo "Rebooting in 5 seconds..."
-        sleep 5
-        reboot
-        ;;
-    "Exit")
-        echo "You can reboot when ready by typing 'reboot'"
-        exit 0
-        ;;
+read -p "
+Press 'r' to reboot now or any other key to exit: " choice
+case "$choice" in
+  r|R ) echo "Rebooting in 5 seconds..."; sleep 5; reboot;;
+  * ) echo "You can reboot when ready by typing 'reboot'";;
 esac
 
 EOF
