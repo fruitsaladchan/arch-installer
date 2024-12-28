@@ -818,11 +818,21 @@ echo -ne "
 =========================================================================
 
 The installation has completed successfully!
-"
 
-read -p "Press 'r' to reboot now or any other key to exit: " choice
-case "$choice" in
-  r|R ) echo "Rebooting in 5 seconds..."; sleep 5; reboot;;
-  * ) echo "You can reboot when ready by typing 'reboot'";;
+"
+echo -ne "Please select an option:
+"
+options=("Reboot" "Exit")
+select_option "${options[@]}"
+
+case ${options[$?]} in
+    "Reboot")
+        echo "Rebooting in 5 seconds..."
+        sleep 5
+        reboot
+        ;;
+    "Exit")
+        echo "You can reboot when ready by typing 'reboot'"
+        ;;
 esac
 
