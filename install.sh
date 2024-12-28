@@ -1,5 +1,4 @@
 #!/bin/bash
-exec 2>/dev/null
 clear
 
 echo -ne "
@@ -566,7 +565,7 @@ fi
 
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
-arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<EOF
+arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<'EOF'
 
 echo -ne "
 =========================================================================
@@ -811,6 +810,8 @@ if [[ "${DE}" == "hyprland" ]]; then
         polkit-kde-agent
 fi
 
+EOF
+
 echo -ne "
 =========================================================================
                     Installation Complete!
@@ -824,6 +825,4 @@ case "$choice" in
   r|R ) echo "Rebooting in 5 seconds..."; sleep 5; reboot;;
   * ) echo "You can reboot when ready by typing 'reboot'";;
 esac
-
-EOF
 
