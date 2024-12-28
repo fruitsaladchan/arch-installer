@@ -1,4 +1,5 @@
 #!/bin/bash
+exec 2>/dev/null
 clear
 
 echo -ne "
@@ -586,16 +587,15 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo -ne "
 -------------------------------------------------------------------------
-                    You have " $nc" cores. And
-            changing the makeflags for " $nc" cores. Aswell as
-                changing the compression settings.
+                    Setting up build configuration
 -------------------------------------------------------------------------
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
-sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
-sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
+    sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
+    sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
 fi
+
 echo -ne "
 =========================================================================
                          Language Setup
@@ -819,8 +819,7 @@ echo -ne "
 The installation has completed successfully!
 "
 
-read -p "
-Press 'r' to reboot now or any other key to exit: " choice
+read -p "Press 'r' to reboot now or any other key to exit: " choice
 case "$choice" in
   r|R ) echo "Rebooting in 5 seconds..."; sleep 5; reboot;;
   * ) echo "You can reboot when ready by typing 'reboot'";;
