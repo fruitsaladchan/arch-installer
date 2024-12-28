@@ -7,7 +7,14 @@ echo -ne "
 =========================================================================
 
 Checking Arch Linux ISO.....
-
+"
+sleep 1
+echo -ne "
+checking root ....
+"
+sleep 1
+echo -ne "
+checking pacman ....
 "
 if [ ! -f /usr/bin/pacstrap ]; then
     echo "script must be run from an arch ISO environment."
@@ -352,14 +359,7 @@ display_manager () {
 }
 
 # Main installation sequence
-echo -ne "
-=========================================================================
-                    Arch Linux Installation
-=========================================================================
-"
-
 background_checks
-clear
 userinfo
 clear
 swapsize
