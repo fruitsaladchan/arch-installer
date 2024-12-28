@@ -60,7 +60,7 @@ select_option() {
         fi
 
         if [ $last_selected -eq -1 ]; then
-            echo "select an option using the arrow keys and Enter:
+            echo "
             "
         fi
         for i in "${!options[@]}"; do
