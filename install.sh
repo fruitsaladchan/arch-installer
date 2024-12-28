@@ -597,7 +597,7 @@ sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg
 fi
 echo -ne "
 =========================================================================
-                      lang setup
+                         Language Setup
 =========================================================================
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
@@ -810,6 +810,29 @@ if [[ "${DE}" == "hyprland" ]]; then
         polkit-kde-agent
 fi
 
+echo -ne "
+=========================================================================
+                    Installation Complete!
+=========================================================================
+
+The installation has completed successfully!
+
+What would you like to do?
 "
+options=("Reboot" "Exit")
+select_option "${options[@]}"
+
+case ${options[$?]} in
+    "Reboot")
+        echo "Rebooting in 5 seconds..."
+        sleep 5
+        reboot
+        ;;
+    "Exit")
+        echo "You can reboot when ready by typing 'reboot'"
+        exit 0
+        ;;
+esac
+
 EOF
 
