@@ -232,10 +232,38 @@ userinfo () {
     export NAME_OF_MACHINE=$name_of_machine
 }
 
+swapsize () {
+    echo -ne "
+    Do you want to create a swap partition?
+    "
+    options=("Yes" "No")
+    select_option "${options[@]}"
+
+    case ${options[$?]} in
+        Yes)
+            echo -ne "\nEnter swap size in GB (e.g. 4): "
+            read -r swap_size
+            if [[ $swap_size =~ ^[0-9]+$ ]]; then
+                export SWAP_SIZE=$swap_size
+                export CREATE_SWAP=true
+            else
+                echo "Invalid input. Skipping swap partition creation."
+                export CREATE_SWAP=false
+            fi
+            ;;
+        No)
+            export CREATE_SWAP=false
+            ;;
+        *) echo "Wrong option. Try again"; swapsize;;
+    esac
+}
+
 # functions
 background_checks
 clear
 userinfo
+clear
+swapsize
 clear
 diskpart
 clear
@@ -281,7 +309,14 @@ sgdisk -a 2048 -o "${DISK}"
 
 sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' "${DISK}"
 sgdisk -n 2::+1GiB --typecode=2:ef00 --change-name=2:'EFIBOOT' "${DISK}"
-sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' "${DISK}"
+
+if [[ "${CREATE_SWAP}" == "true" ]]; then
+    sgdisk -n 3::+"${SWAP_SIZE}"GiB --typecode=3:8200 --change-name=3:'SWAP' "${DISK}"
+    sgdisk -n 4::-0 --typecode=4:8300 --change-name=4:'ROOT' "${DISK}"
+else
+    sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' "${DISK}"
+fi
+
 if [[ ! -d "/sys/firmware/efi" ]]; then 
     sgdisk -A 1:set:2 "${DISK}"
 fi
@@ -311,36 +346,62 @@ subvolumesetup () {
 
 if [[ "${DISK}" =~ "nvme" ]]; then
     partition2=${DISK}p2
-    partition3=${DISK}p3
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        partition3=${DISK}p3
+        partition4=${DISK}p4
+        root_partition=$partition4
+    else
+        partition3=${DISK}p3
+        root_partition=$partition3
+    fi
 else
     partition2=${DISK}2
-    partition3=${DISK}3
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        partition3=${DISK}3
+        partition4=${DISK}4
+        root_partition=$partition4
+    else
+        partition3=${DISK}3
+        root_partition=$partition3
+    fi
 fi
 
 if [[ "${FS}" == "btrfs" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "${partition2}"
-    mkfs.btrfs -f "${partition3}"
-    mount -t btrfs "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    mkfs.btrfs -f "${root_partition}"
+    mount -t btrfs "${root_partition}" /mnt
     subvolumesetup
 elif [[ "${FS}" == "ext4" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "${partition2}"
-    mkfs.ext4 "${partition3}"
-    mount -t ext4 "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    mkfs.ext4 "${root_partition}"
+    mount -t ext4 "${root_partition}" /mnt
 elif [[ "${FS}" == "luks" ]]; then
     mkfs.vfat -F32 "${partition2}"
-    echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat "${partition3}" -
-    echo -n "${LUKS_PASSWORD}" | cryptsetup open "${partition3}" ROOT -
-    mkfs.btrfs "${partition3}"
-    mount -t btrfs "${partition3}" /mnt
+    if [[ "${CREATE_SWAP}" == "true" ]]; then
+        mkswap "${partition3}"
+        swapon "${partition3}"
+    fi
+    echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat "${root_partition}" -
+    echo -n "${LUKS_PASSWORD}" | cryptsetup open "${root_partition}" ROOT -
+    mkfs.btrfs "${root_partition}"
+    mount -t btrfs "${root_partition}" /mnt
     subvolumesetup
-    ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value "${partition3}")
+    ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value "${root_partition}")
 fi
 
 BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
 
 sync
 if ! mountpoint -q /mnt; then
-    echo "ERROR! Failed to mount ${partition3} to /mnt after multiple attempts."
+    echo "ERROR! Failed to mount ${root_partition} to /mnt after multiple attempts."
     exit 1
 fi
 mkdir -p /mnt/boot/efi
@@ -605,6 +666,12 @@ pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfe
 echo "  installing usefull tools"
 xdg-user-dirs-update
 echo "  finished"
+
+# Add swap entry to fstab if swap was created
+if [[ "${CREATE_SWAP}" == "true" ]]; then
+    SWAP_UUID=$(blkid -s UUID -o value "${partition3}")
+    echo "UUID=${SWAP_UUID} none swap sw 0 0" >> /mnt/etc/fstab
+fi
 
 "
 EOF
