@@ -258,12 +258,85 @@ swapsize () {
     esac
 }
 
+desktop_env () {
+    echo -ne "
+    Select your desktop environment / window manager:
+    "
+    options=("KDE Plasma" "GNOME" "XFCE" "i3" "Hyprland" "None")
+    select_option "${options[@]}"
+
+    case ${options[$?]} in
+        "KDE Plasma")
+            export DE="kde"
+            export DE_PACKAGES="plasma-meta konsole dolphin ark spectacle gwenview okular plasma-wayland-session"
+            ;;
+        "GNOME")
+            export DE="gnome"
+            export DE_PACKAGES="gnome gnome-tweaks gnome-terminal"
+            ;;
+        "XFCE")
+            export DE="xfce"
+            export DE_PACKAGES="xfce4 xfce4-goodies"
+            ;;
+        "i3")
+            export DE="i3"
+            export DE_PACKAGES="i3-wm i3blocks i3lock i3status dmenu rxvt-unicode"
+            ;;
+        "Hyprland")
+            export DE="hyprland"
+            export DE_PACKAGES="hyprland waybar wofi kitty"
+            ;;
+        "None")
+            export DE="none"
+            export DE_PACKAGES=""
+            ;;
+        *) echo "Wrong option. Try again"; desktop_env;;
+    esac
+}
+
+display_manager () {
+    if [[ "${DE}" != "none" ]]; then
+        echo -ne "
+    Select your display manager:
+    "
+        options=("GDM" "SDDM" "LightDM" "None")
+        select_option "${options[@]}"
+
+        case ${options[$?]} in
+            "GDM")
+                export DM="gdm"
+                export DM_PACKAGES="gdm"
+                ;;
+            "SDDM")
+                export DM="sddm"
+                export DM_PACKAGES="sddm"
+                ;;
+            "LightDM")
+                export DM="lightdm"
+                export DM_PACKAGES="lightdm lightdm-gtk-greeter"
+                ;;
+            "None")
+                export DM=""
+                export DM_PACKAGES=""
+                ;;
+            *) echo "Wrong option. Try again"; display_manager;;
+        esac
+    else
+        export DM=""
+        export DM_PACKAGES=""
+    fi
+}
+
 # functions
 background_checks
 clear
 userinfo
 clear
 swapsize
+clear
+desktop_env
+clear
+display_manager
 clear
 diskpart
 clear
@@ -673,5 +746,41 @@ if [[ "${CREATE_SWAP}" == "true" ]]; then
     echo "UUID=${SWAP_UUID} none swap sw 0 0" >> /mnt/etc/fstab
 fi
 
+echo -ne "
+=========================================================================
+                    Installing Desktop Environment
+=========================================================================
+"
+if [[ "${DE}" != "none" ]]; then
+    # Install X.org if needed
+    if [[ "${DE}" != "hyprland" ]]; then
+        pacman -S --noconfirm --needed xorg xorg-server
+    fi
+    
+    # Install chosen DE/WM
+    pacman -S --noconfirm --needed ${DE_PACKAGES}
+    
+    # Install display manager if selected
+    if [[ -n "${DM}" ]]; then
+        pacman -S --noconfirm --needed ${DM_PACKAGES}
+        systemctl enable ${DM}.service
+        echo "  Display Manager enabled"
+    fi
+    
+    # Additional packages for proper DE functionality
+    pacman -S --noconfirm --needed xdg-utils xdg-desktop-portal-gtk \
+        pipewire pipewire-pulse wireplumber \
+        network-manager-applet pavucontrol
+fi
+
+# If Hyprland was selected, install additional Wayland packages
+if [[ "${DE}" == "hyprland" ]]; then
+    pacman -S --noconfirm --needed \
+        xdg-desktop-portal-hyprland \
+        qt5-wayland qt6-wayland \
+        polkit-kde-agent
+fi
+
 "
 EOF
+
