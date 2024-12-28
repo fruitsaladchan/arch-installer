@@ -16,5 +16,7 @@
   - ssh
   - ntp
   - network manager
+ 
+- install grub, cpu microodes, and detect gpu and install graphic drivers
 
 - will install [this](https://github.com/13atm01/GRUB-Theme/tree/master/Touhou%20Project) touhou grub theme
