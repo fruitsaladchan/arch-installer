@@ -3,7 +3,7 @@ clear
 
 echo -ne "
 =========================================================================
-                    Personal Arch Linux Installer Script
+                     Arch Linux Install Script
 =========================================================================
 
 Checking Arch Linux ISO.....
