@@ -820,18 +820,20 @@ echo -ne "
 The installation has completed successfully!
 
 "
-echo -ne "Please select an option:
+echo -ne "What do you want to do:
 "
 options=("Reboot" "Exit")
 select_option "${options[@]}"
 
 case ${options[$?]} in
     "Reboot")
+        echo ""
         echo "Rebooting in 5 seconds..."
         sleep 5
         reboot
         ;;
     "Exit")
+        echo ""
         echo "You can reboot when ready by typing 'reboot'"
         ;;
 esac
