@@ -3,11 +3,17 @@ clear
 
 echo -ne "
 =========================================================================
-                    Personal Arch Linux Installer Script
+                     Arch Linux Install Script
 =========================================================================
 
 Checking Arch Linux ISO.....
-
+"
+sleep 1
+echo -ne "
+checking distro....
+"
+echo -ne "
+checking pacman ....
 "
 if [ ! -f /usr/bin/pacstrap ]; then
     echo "script must be run from an arch ISO environment."
@@ -53,7 +59,8 @@ select_option() {
         fi
 
         if [ $last_selected -eq -1 ]; then
-            echo "Please select an option using the arrow keys and Enter:"
+            echo "
+            "
         fi
         for i in "${!options[@]}"; do
             if [ "$i" -eq $selected ]; then
@@ -351,14 +358,7 @@ display_manager () {
 }
 
 # Main installation sequence
-echo -ne "
-=========================================================================
-                    Arch Linux Installation
-=========================================================================
-"
-
 background_checks
-clear
 userinfo
 clear
 swapsize
@@ -545,7 +545,7 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
 fi
 echo -ne "
 =========================================================================
-                    Checking for low memory systems <8G
+                    Setting up swap
 =========================================================================
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
@@ -564,7 +564,7 @@ fi
 
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
-arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<EOF
+arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<'EOF'
 
 echo -ne "
 =========================================================================
@@ -585,19 +585,18 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo -ne "
 -------------------------------------------------------------------------
-                    You have " $nc" cores. And
-            changing the makeflags for " $nc" cores. Aswell as
-                changing the compression settings.
+                    Setting up build configuration
 -------------------------------------------------------------------------
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
-sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
-sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
+    sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
+    sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
 fi
+
 echo -ne "
 =========================================================================
-                      lang setup
+                         Language Setup
 =========================================================================
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
@@ -684,7 +683,7 @@ fi
 
 echo -ne "
 =========================================================================
-                    Automated Arch Linux Installer
+                    GRUB EFI Bootloader Install & Check
 =========================================================================
 
 Final Setup and Configurations
@@ -764,7 +763,7 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
                   Installing usefull packages
 =========================================================================
 "
-pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop xdg-user-dirs
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch htop xdg-user-dirs bash-completion
 echo "  installing usefull tools"
 xdg-user-dirs-update
 echo "  finished"
@@ -810,6 +809,32 @@ if [[ "${DE}" == "hyprland" ]]; then
         polkit-kde-agent
 fi
 
-"
 EOF
+clear
+
+echo -ne "
+=========================================================================
+                    Installation Complete!
+=========================================================================
+
+The installation has completed successfully!
+
+"
+echo -ne "What do you want to do:
+"
+options=("Reboot" "Exit")
+select_option "${options[@]}"
+
+case ${options[$?]} in
+    "Reboot")
+        echo ""
+        echo "Rebooting in 5 seconds..."
+        sleep 5
+        reboot
+        ;;
+    "Exit")
+        echo ""
+        echo "You can reboot when ready by typing 'reboot'"
+        ;;
+esac
 
