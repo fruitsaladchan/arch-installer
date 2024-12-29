@@ -11,6 +11,9 @@
   - ripgrep
   - eza
   - neovim
+  - fastfetch
+  - sd
+  - nettools
 
 - enable services such as
   - ssh
