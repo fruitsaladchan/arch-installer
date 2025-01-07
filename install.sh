@@ -203,15 +203,14 @@ drivessd() {
 diskpart() {
   echo -ne "
 =========================================================================
-    WARNING !!!!
-    THIS WILL FORMAT AND WIPE ALL DATA ON THE DRIVE
+    WARNING !!!! THIS WILL FORMAT AND WIPE ALL DATA ON THE DRIVE
 =========================================================================
 
 "
 
   PS3='
     Select the disk to install on: '
-  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2":"$3}'))
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
 
   select_option "${options[@]}"
   disk=${options[$?]%|*}
