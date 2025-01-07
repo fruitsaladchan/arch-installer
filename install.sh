@@ -794,6 +794,10 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion
 echo "  installing usefull tools"
 xdg-user-dirs-update
+curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan/bashrc/refs/heads/main/.bashrc
+chown $USERNAME:$USERNAME /home/$USERNAME/.bashrc
+chmod 644 /home/$USERNAME/.bashrc
+
 echo "  finished"
 
 # Add swap entry to fstab if swap was created
