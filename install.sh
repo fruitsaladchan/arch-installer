@@ -180,7 +180,7 @@ keymap() {
 
 drivessd() {
   echo -ne "
-    Is this an ssd? yes/no (adds kernel param):
+    Is this an ssd? yes/no:
     "
 
   options=("Yes" "No")
@@ -211,7 +211,7 @@ diskpart() {
 
   PS3='
     Select the disk to install on: '
-  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2":"$3}'))
 
   select_option "${options[@]}"
   disk=${options[$?]%|*}
@@ -797,6 +797,14 @@ curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan
 chown $USERNAME:$USERNAME /home/$USERNAME/.bashrc
 chmod 644 /home/$USERNAME/.bashrc
 
+# Create a temporary directory for building yay
+echo "  Installing yay AUR helper..."
+cd /home/$USERNAME
+sudo -u $USERNAME git clone https://aur.archlinux.org/yay.git
+cd yay
+sudo -u $USERNAME makepkg -si --noconfirm
+cd ..
+rm -rf yay
 echo "  finished"
 
 if [[ "${CREATE_SWAP}" == "true" ]]; then
