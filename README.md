@@ -6,6 +6,8 @@
 
 - partition and format drive
 
+- prompt for swap size
+
 - will install some usefull packages that i personally like to use
   - fzf
   - ripgrep
@@ -15,10 +17,13 @@
   - sd
   - nettools
 
+- install my [bashrc](https://github.com/fruitsaladchan/bashrc/tree/main)
+
 - enable services such as
   - ssh
   - ntp
   - network manager
+
  
 - install grub, cpu microcodes, and detect gpu and install graphic drivers
 

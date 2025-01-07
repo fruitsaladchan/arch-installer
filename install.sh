@@ -779,14 +779,13 @@ echo -ne "
                     Cleaning
 =========================================================================
 "
-# Remove no password sudo rights
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
-# Add sudo rights
+
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-"
+echo -ne "
 =========================================================================
                   Installing usefull packages
 =========================================================================
@@ -800,7 +799,6 @@ chmod 644 /home/$USERNAME/.bashrc
 
 echo "  finished"
 
-# Add swap entry to fstab if swap was created
 if [[ "${CREATE_SWAP}" == "true" ]]; then
     SWAP_UUID=$(blkid -s UUID -o value "${partition3}")
     echo "UUID=${SWAP_UUID} none swap sw 0 0" >> /mnt/etc/fstab
