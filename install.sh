@@ -211,7 +211,7 @@ diskpart() {
 
   PS3='
     Select the disk to install on: '
-  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2":"$3}'))
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
 
   select_option "${options[@]}"
   disk=${options[$?]%|*}
