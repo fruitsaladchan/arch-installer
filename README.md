@@ -6,7 +6,7 @@
 
 - partition and format drive
 
-- prompt for swap size
+- prompt for swap 
 
 - will install some usefull packages that i personally like to use
   - fzf
@@ -15,15 +15,16 @@
   - neovim
   - fastfetch
   - sd
+  - bat
   - nettools
 
 - install my [bashrc](https://github.com/fruitsaladchan/bashrc/tree/main)
+- install yay
 
 - enable services such as
   - ssh
   - ntp
   - network manager
-
  
 - install grub, cpu microcodes, and detect gpu and install graphic drivers
 
