@@ -800,11 +800,11 @@ chmod 644 /home/$USERNAME/.bashrc
 # Create a temporary directory for building yay
 echo "  Installing yay AUR helper..."
 cd /home/$USERNAME
-sudo -u $USERNAME git clone https://aur.archlinux.org/yay.git
-cd yay
+sudo -u $USERNAME git clone https://aur.archlinux.org/yay-bin.git
+cd yay-bin
 sudo -u $USERNAME makepkg -si --noconfirm
 cd ..
-rm -rf yay
+rm -rf yay-bin
 echo "  finished"
 
 if [[ "${CREATE_SWAP}" == "true" ]]; then
