@@ -6,6 +6,8 @@
 
 - partition and format drive
 
+- prompt for swap 
+
 - will install some usefull packages that i personally like to use
   - fzf
   - ripgrep
@@ -13,7 +15,11 @@
   - neovim
   - fastfetch
   - sd
+  - bat
   - nettools
+
+- install my [bashrc](https://github.com/fruitsaladchan/bashrc/tree/main)
+- install yay
 
 - enable services such as
   - ssh
