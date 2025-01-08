@@ -91,13 +91,13 @@ select_option() {
             ;;
         esac
         ;;
-      'k') # Vim up
+      'k') # Vim up (k)
         ((selected--))
         if [ $selected -lt 0 ]; then
           selected=$((num_options - 1))
         fi
         ;;
-      'j') # Vim down
+      'j') # Vim down (j)
         ((selected++))
         if [ $selected -ge $num_options ]; then
           selected=0
@@ -866,8 +866,11 @@ select_option "${options[@]}"
 case ${options[$?]} in
   "Reboot")
     echo ""
-    echo "Rebooting in 5 seconds..."
-    sleep 5
+    echo "Rebooting in:"
+    for i in {5..1}; do
+      echo "$i..."
+      sleep 1
+    done
     reboot
     ;;
   "Exit")
