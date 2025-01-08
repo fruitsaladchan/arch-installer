@@ -91,6 +91,18 @@ select_option() {
             ;;
         esac
         ;;
+      'k') # Vim up (k)
+        ((selected--))
+        if [ $selected -lt 0 ]; then
+          selected=$((num_options - 1))
+        fi
+        ;;
+      'j') # Vim down (j)
+        ((selected++))
+        if [ $selected -ge $num_options ]; then
+          selected=0
+        fi
+        ;;
       '') # Enter key
         break
         ;;
@@ -168,7 +180,7 @@ keymap() {
 
 drivessd() {
   echo -ne "
-    Is this an ssd? yes/no (adds kernel param):
+    Is this an ssd? yes/no:
     "
 
   options=("Yes" "No")
@@ -767,14 +779,13 @@ echo -ne "
                     Cleaning
 =========================================================================
 "
-# Remove no password sudo rights
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
-# Add sudo rights
+
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-"
+echo -ne "
 =========================================================================
                   Installing usefull packages
 =========================================================================
@@ -782,9 +793,20 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion
 echo "  installing usefull tools"
 xdg-user-dirs-update
+curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan/bashrc/refs/heads/main/.bashrc
+chown $USERNAME:$USERNAME /home/$USERNAME/.bashrc
+chmod 644 /home/$USERNAME/.bashrc
+
+# Create a temporary directory for building yay
+echo "  Installing yay AUR helper..."
+cd /home/$USERNAME
+sudo -u $USERNAME git clone https://aur.archlinux.org/yay-bin.git
+cd yay-bin
+sudo -u $USERNAME makepkg -si --noconfirm
+cd ..
+rm -rf yay-bin
 echo "  finished"
 
-# Add swap entry to fstab if swap was created
 if [[ "${CREATE_SWAP}" == "true" ]]; then
     SWAP_UUID=$(blkid -s UUID -o value "${partition3}")
     echo "UUID=${SWAP_UUID} none swap sw 0 0" >> /mnt/etc/fstab
@@ -844,8 +866,11 @@ select_option "${options[@]}"
 case ${options[$?]} in
   "Reboot")
     echo ""
-    echo "Rebooting in 5 seconds..."
-    sleep 5
+    echo "Rebooting in:"
+    for i in {5..1}; do
+      echo "$i..."
+      sleep 1
+    done
     reboot
     ;;
   "Exit")
