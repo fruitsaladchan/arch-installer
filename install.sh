@@ -2,9 +2,30 @@
 clear
 
 echo -ne "
-=========================================================================
-                     Arch Linux Install Script
-=========================================================================
+
+ ▄▄▄       ██▀███   ▄████▄   ██░ ██                                        
+▒████▄    ▓██ ▒ ██▒▒██▀ ▀█  ▓██░ ██▒                                       
+▒██  ▀█▄  ▓██ ░▄█ ▒▒▓█    ▄ ▒██▀▀██░                                       
+░██▄▄▄▄██ ▒██▀▀█▄  ▒▓▓▄ ▄██▒░▓█ ░██                                        
+ ▓█   ▓██▒░██▓ ▒██▒▒ ▓███▀ ░░▓█▒░██▓                                       
+ ▒▒   ▓▒█░░ ▒▓ ░▒▓░░ ░▒ ▒  ░ ▒ ░░▒░▒                                       
+  ▒   ▒▒ ░  ░▒ ░ ▒░  ░  ▒    ▒ ░▒░ ░                                       
+  ░   ▒     ░░   ░ ░         ░  ░░ ░                                       
+      ░  ░   ░     ░ ░       ░  ░  ░                                       
+                   ░                                                       
+ ██▓ ███▄    █   ██████ ▄▄▄█████▓ ▄▄▄       ██▓     ██▓    ▓█████  ██▀███  
+▓██▒ ██ ▀█   █ ▒██    ▒ ▓  ██▒ ▓▒▒████▄    ▓██▒    ▓██▒    ▓█   ▀ ▓██ ▒ ██▒
+▒██▒▓██  ▀█ ██▒░ ▓██▄   ▒ ▓██░ ▒░▒██  ▀█▄  ▒██░    ▒██░    ▒███   ▓██ ░▄█ ▒
+░██░▓██▒  ▐▌██▒  ▒   ██▒░ ▓██▓ ░ ░██▄▄▄▄██ ▒██░    ▒██░    ▒▓█  ▄ ▒██▀▀█▄  
+░██░▒██░   ▓██░▒██████▒▒  ▒██▒ ░  ▓█   ▓██▒░██████▒░██████▒░▒████▒░██▓ ▒██▒
+░▓  ░ ▒░   ▒ ▒ ▒ ▒▓▒ ▒ ░  ▒ ░░    ▒▒   ▓▒█░░ ▒░▓  ░░ ▒░▓  ░░░ ▒░ ░░ ▒▓ ░▒▓░
+ ▒ ░░ ░░   ░ ▒░░ ░▒  ░ ░    ░      ▒   ▒▒ ░░ ░ ▒  ░░ ░ ▒  ░ ░ ░  ░  ░▒ ░ ▒░
+ ▒ ░   ░   ░ ░ ░  ░  ░    ░        ░   ▒     ░ ░     ░ ░      ░     ░░   ░ 
+ ░           ░       ░                 ░  ░    ░  ░    ░  ░   ░  ░   ░     
+
+           ╔════════════════════════════════════════════════════╗
+           ║              Version 1.0 - By fruitsaladchan       ║
+           ╚════════════════════════════════════════════════════╝
 
 Checking Arch Linux ISO.....
 "
@@ -114,14 +135,16 @@ select_option() {
 
 logo() {
   echo -ne "
-=========================================================================
-                        system settings
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                  System Settings                   ║
+           ╚════════════════════════════════════════════════════╝
 "
 }
 filesystem() {
   echo -ne "
-    Select your file system (boot and root)
+           ╔════════════════════════════════════════════════════╗
+           ║                  Select file system                ║
+           ╚════════════════════════════════════════════════════╝
     "
   options=("btrfs" "ext4" "luks" "exit")
   select_option "${options[@]}"
@@ -141,10 +164,12 @@ filesystem() {
   esac
 }
 timezone() {
-  time_zone="$(curl --fail https://ipapi.co/timezone)"
+  time_zone="$(curl --silent --fail https://ipapi.co/timezone)"
   echo -ne "
-    System detected your timezone to be '$time_zone' \n"
-  echo -ne "Is this correct?
+           ╔════════════════════════════════════════════════════════════╗
+           ║ System detected your time zone to be '$time_zone'     ║
+           ║ Is this correct?                                           ║
+           ╚════════════════════════════════════════════════════════════╝
     "
   options=("Yes" "No")
   select_option "${options[@]}"
@@ -168,7 +193,10 @@ timezone() {
 }
 keymap() {
   echo -ne "
-    Please select key board layout from this list"
+           ╔════════════════════════════════════════════════════╗
+           ║               Select keyboard layout               ║
+           ╚════════════════════════════════════════════════════╝
+    "
   options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru se sg ua uk)
 
   select_option "${options[@]}"
@@ -180,7 +208,9 @@ keymap() {
 
 drivessd() {
   echo -ne "
-    Is this an ssd? yes/no:
+           ╔════════════════════════════════════════════════════╗
+           ║               Is this an ssd? yes/no               ║
+           ╚════════════════════════════════════════════════════╝
     "
 
   options=("Yes" "No")
@@ -202,12 +232,11 @@ drivessd() {
 
 diskpart() {
   echo -ne "
-=========================================================================
-    WARNING !!!!
-    THIS WILL FORMAT AND WIPE ALL DATA ON THE DRIVE
-=========================================================================
-
-"
+           ╔════════════════════════════════════════════════════╗
+           ║  WARNING!!!                                        ║ 
+           ║  this will format and wipe all data on the drive   ║
+           ╚════════════════════════════════════════════════════╝
+    "
 
   PS3='
     Select the disk to install on: '
@@ -224,9 +253,9 @@ diskpart() {
 
 userinfo() {
   echo -ne "
-=========================================================================
-                    User Configuration
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                    User Config                     ║
+           ╚════════════════════════════════════════════════════╝
 "
   while true; do
     read -r -p "
@@ -268,9 +297,9 @@ userinfo() {
 
 swapsize() {
   echo -ne "
-=========================================================================
-                    Swap Configuration
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                      Swap Config                   ║
+           ╚════════════════════════════════════════════════════╝
 "
   echo -ne "
     Do you want to create a swap partition?
@@ -302,9 +331,9 @@ swapsize() {
 
 desktop_env() {
   echo -ne "
-=========================================================================
-                    Desktop Environment Selection
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                Desktop Environment                 ║
+           ╚════════════════════════════════════════════════════╝
 "
   echo -ne "
     Select your desktop environment / window manager:
@@ -347,9 +376,9 @@ desktop_env() {
 display_manager() {
   if [[ "${DE}" != "none" ]]; then
     echo -ne "
-=========================================================================
-                    Display Manager Selection
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                   Display Manager                  ║
+           ╚════════════════════════════════════════════════════╝
 "
     echo -ne "
     Select your display manager:
@@ -403,7 +432,6 @@ timezone
 clear
 keymap
 
-echo "Setting up mirrors for optimal download"
 iso=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -Sy
@@ -414,24 +442,24 @@ sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
-=========================================================================
-                    Setting up $iso mirrors for faster downloads
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║               Setting up $iso mirrors              ║
+           ╚════════════════════════════════════════════════════╝
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 if [ ! -d "/mnt" ]; then
   mkdir /mnt
 fi
 echo -ne "
-=========================================================================
-                    Installing Prerequisites
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║              Installing Prerequisites              ║
+           ╚════════════════════════════════════════════════════╝
 "
 pacman -S --noconfirm --needed gptfdisk btrfs-progs glibc
 echo -ne "
-=========================================================================
-                    Formatting Disk
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                  Formatting Disk                   ║
+           ╚════════════════════════════════════════════════════╝
 "
 umount -A --recursive /mnt
 sgdisk -Z "${DISK}"
@@ -453,9 +481,9 @@ fi
 partprobe "${DISK}"
 
 echo -ne "
-=========================================================================
-                    Creating Filesystems
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                 Creating Filesystem                ║
+           ╚════════════════════════════════════════════════════╝
 "
 createsubvolumes() {
   btrfs subvolume create /mnt/@
@@ -546,9 +574,9 @@ if ! grep -qs '/mnt' /proc/mounts; then
 fi
 
 echo -ne "
-=========================================================================
-                    Arch Install on Main Drive
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║               Install on main drive                ║
+           ╚════════════════════════════════════════════════════╝
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
   pacstrap /mnt base base-devel linux linux-firmware --noconfirm --needed
@@ -564,17 +592,17 @@ echo "
 "
 cat /mnt/etc/fstab
 echo -ne "
-=========================================================================
-                    GRUB BIOS Bootloader Install & Check
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                Bootloader install                  ║
+           ╚════════════════════════════════════════════════════╝
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
   grub-install --boot-directory=/mnt/boot "${DISK}"
 fi
 echo -ne "
-=========================================================================
-                    Setting up swap
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                  Setting up swap                   ║
+           ╚════════════════════════════════════════════════════╝
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[ $TOTAL_MEM -lt 8000000 ]]; then
@@ -595,16 +623,16 @@ gpu_type=$(lspci | grep -E "VGA|3D|Display")
 arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<'EOF'
 
 echo -ne "
-=========================================================================
-                    Network Setup
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                  Network Setup                     ║
+           ╚════════════════════════════════════════════════════╝
 "
 pacman -S --noconfirm --needed networkmanager dhclient
 systemctl enable --now NetworkManager
 echo -ne "
-=========================================================================
-                    Setting up mirrors for optimal download
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                  Setting up mirrors                ║
+           ╚════════════════════════════════════════════════════╝
 "
 pacman -S --noconfirm --needed pacman-contrib curl
 pacman -S --noconfirm --needed reflector rsync grub arch-install-scripts git ntp wget openssh
@@ -612,9 +640,9 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo -ne "
--------------------------------------------------------------------------
-                    Setting up build configuration
--------------------------------------------------------------------------
+           ╔════════════════════════════════════════════════════╗
+           ║                    Build Config                    ║
+           ╚════════════════════════════════════════════════════╝
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
@@ -623,9 +651,9 @@ if [[  $TOTAL_MEM -gt 8000000 ]]; then
 fi
 
 echo -ne "
-=========================================================================
-                         Language Setup
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                    Language Setup                  ║
+           ╚════════════════════════════════════════════════════╝
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
@@ -654,9 +682,9 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 pacman -Sy --noconfirm --needed
 
 echo -ne "
-=========================================================================
-                    Installing CPU Microcode
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                    Cpu microcode                   ║
+           ╚════════════════════════════════════════════════════╝
 "
 # determine processor type and install microcode
 if grep -q "GenuineIntel" /proc/cpuinfo; then
@@ -670,9 +698,9 @@ else
 fi
 
 echo -ne "
-=========================================================================
-                    Installing Graphics Drivers
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                 Graphics drivers                   ║
+           ╚════════════════════════════════════════════════════╝
 "
 # Graphics Drivers find and install
 if echo "${gpu_type}" | grep -E "NVIDIA|GeForce"; then
@@ -690,9 +718,9 @@ elif echo "${gpu_type}" | grep -E "Intel Corporation UHD"; then
 fi
 
 echo -ne "
-=========================================================================
-                    Adding User
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                    Adding User                     ║
+           ╚════════════════════════════════════════════════════╝
 "
 groupadd libvirt
 useradd -m -G wheel,libvirt -s /bin/bash $USERNAME
@@ -710,12 +738,9 @@ if [[ ${FS} == "luks" ]]; then
 fi
 
 echo -ne "
-=========================================================================
-                    GRUB EFI Bootloader Install & Check
-=========================================================================
-
-Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
+           ╔════════════════════════════════════════════════════╗
+           ║                    Grub efi check                  ║
+           ╚════════════════════════════════════════════════════╝
 "
 
 if [[ -d "/sys/firmware/efi" ]]; then
@@ -723,16 +748,13 @@ if [[ -d "/sys/firmware/efi" ]]; then
 fi
 
 echo -ne "
-=========================================================================
-               Creating + Theme Boot Menu
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                   Theme boot menu                  ║
+           ╚════════════════════════════════════════════════════╝
 "
-# set kernel parameter for decrypting the drive
 if [[ "${FS}" == "luks" ]]; then
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
 fi
-# set kernel parameter for adding splash screen
-# sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 sed -i 's/ quiet / /g; s/^GRUB_CMDLINE_LINUX_DEFAULT="quiet /GRUB_CMDLINE_LINUX_DEFAULT="/; s/ quiet"$/"/; s/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash loglevel=3/' /etc/default/grub
 
 echo -e "Installing Grub theme..."
@@ -756,10 +778,9 @@ grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
 echo -ne "
-
-=========================================================================
-                    Enabling Services
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                   Enabling service                 ║
+           ╚════════════════════════════════════════════════════╝
 "
 ntpd -qg
 systemctl enable ntpd.service
@@ -775,9 +796,9 @@ echo "  ssh enabled"
 
 echo -ne "
 
-=========================================================================
-                    Cleaning
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                      Cleaning                      ║
+           ╚════════════════════════════════════════════════════╝
 "
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
@@ -786,9 +807,9 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 echo -ne "
-=========================================================================
-                  Installing usefull packages
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║                Installing extra packages           ║
+           ╚════════════════════════════════════════════════════╝
 "
 pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion
 echo "  installing usefull tools"
@@ -813,9 +834,9 @@ if [[ "${CREATE_SWAP}" == "true" ]]; then
 fi
 
 echo -ne "
-=========================================================================
-                    Installing Desktop Environment
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║           Installing Desktop environment           ║
+           ╚════════════════════════════════════════════════════╝
 "
 if [[ "${DE}" != "none" ]]; then
     # Install X.org if needed
@@ -851,9 +872,9 @@ EOF
 clear
 
 echo -ne "
-=========================================================================
-                    Installation Complete!
-=========================================================================
+           ╔════════════════════════════════════════════════════╗
+           ║              Installation completed!!              ║
+           ╚════════════════════════════════════════════════════╝
 
 The installation has completed successfully!
 
