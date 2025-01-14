@@ -143,7 +143,10 @@ logo() {
 }
 filesystem() {
   echo -ne "
-    Select your file system (boot and root)
+           ╔════════════════════════════════════════════════════╗
+           ║                  Select file system                ║
+           ╚════════════════════════════════════════════════════╝
+
     "
   options=("btrfs" "ext4" "luks" "exit")
   select_option "${options[@]}"
