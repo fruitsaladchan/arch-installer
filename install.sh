@@ -24,8 +24,13 @@ echo -ne "
  ░           ░       ░                 ░  ░    ░  ░    ░  ░   ░  ░   ░     
 
            ╔════════════════════════════════════════════════════╗
-           ║              Version 1.0 - By fruitsaladchan       ║
+           ║                - By fruitsaladchan                 ║
            ╚════════════════════════════════════════════════════╝
+
+                         • move with up/down or j/k
+                         • exit with control + c
+
+            ═════════════════════════════════════════════════════
 
 Checking Arch Linux ISO.....
 "
@@ -43,7 +48,7 @@ fi
 
 root_check() {
   if [[ "$(id -u)" != "0" ]]; then
-    echo -ne "ERROR! This script must be run under the 'root' user!\n"
+    echo -ne "ERROR! This script must be run as root\n"
     exit 0
   fi
 }
@@ -432,18 +437,17 @@ timezone
 clear
 keymap
 
-iso=$(curl -4 ifconfig.co/country-iso)
+iso=$(curl --silent -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -Sy
 pacman -S --noconfirm archlinux-keyring
-pacman -S --noconfirm --needed pacman-contrib terminus-font
-setfont ter-v18b
+pacman -S --noconfirm --needed pacman-contrib 
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
            ╔════════════════════════════════════════════════════╗
-           ║               Setting up $iso mirrors              ║
+           ║               Setting up $iso mirrors               ║
            ╚════════════════════════════════════════════════════╝
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
@@ -811,7 +815,7 @@ echo -ne "
            ║                Installing extra packages           ║
            ╚════════════════════════════════════════════════════╝
 "
-pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion dmidecode jq util-linux
 echo "  installing usefull tools"
 xdg-user-dirs-update
 curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan/bashrc/refs/heads/main/.bashrc
@@ -872,9 +876,21 @@ EOF
 clear
 
 echo -ne "
-           ╔════════════════════════════════════════════════════╗
-           ║              Installation completed!!              ║
-           ╚════════════════════════════════════════════════════╝
+
+██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗      █████╗ ████████╗██╗ ██████╗ ███╗   ██╗    
+██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     ██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║    
+██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     ███████║   ██║   ██║██║   ██║██╔██╗ ██║    
+██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     ██╔══██║   ██║   ██║██║   ██║██║╚██╗██║    
+██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║    
+╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝    
+                                                                                                 
+ ██████╗ ██████╗ ███╗   ███╗██████╗ ██╗     ███████╗████████╗███████╗██████╗     ██╗██╗          
+██╔════╝██╔═══██╗████╗ ████║██╔══██╗██║     ██╔════╝╚══██╔══╝██╔════╝██╔══██╗    ██║██║          
+██║     ██║   ██║██╔████╔██║██████╔╝██║     █████╗     ██║   █████╗  ██║  ██║    ██║██║          
+██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝     ██║   ██╔══╝  ██║  ██║    ╚═╝╚═╝          
+╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ███████╗███████╗   ██║   ███████╗██████╔╝    ██╗██╗          
+ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═════╝     ╚═╝╚═╝          
+                                                                                                                                                                                                 
 
 The installation has completed successfully!
 
