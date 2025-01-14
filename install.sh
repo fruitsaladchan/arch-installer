@@ -167,7 +167,7 @@ timezone() {
   time_zone="$(curl --silent --fail https://ipapi.co/timezone)"
   echo -ne "
            ╔════════════════════════════════════════════════════════════╗
-           ║ System detected your time zone to be '$time_zone'          ║
+           ║ System detected your time zone to be '$time_zone'     ║
            ║ Is this correct?                                           ║
            ╚════════════════════════════════════════════════════════════╝
     "
@@ -577,7 +577,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║               Install on main drive                ║
            ╚════════════════════════════════════════════════════╝
-
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
   pacstrap /mnt base base-devel linux linux-firmware --noconfirm --needed
@@ -596,7 +595,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                Bootloader install                  ║
            ╚════════════════════════════════════════════════════╝
-
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
   grub-install --boot-directory=/mnt/boot "${DISK}"
@@ -605,7 +603,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                  Setting up swap                   ║
            ╚════════════════════════════════════════════════════╝
-
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[ $TOTAL_MEM -lt 8000000 ]]; then
@@ -629,7 +626,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                  Network Setup                     ║
            ╚════════════════════════════════════════════════════╝
-
 "
 pacman -S --noconfirm --needed networkmanager dhclient
 systemctl enable --now NetworkManager
@@ -637,7 +633,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                  Setting up mirrors                ║
            ╚════════════════════════════════════════════════════╝
-
 "
 pacman -S --noconfirm --needed pacman-contrib curl
 pacman -S --noconfirm --needed reflector rsync grub arch-install-scripts git ntp wget openssh
@@ -648,7 +643,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                    Build Config                    ║
            ╚════════════════════════════════════════════════════╝
-
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
@@ -660,7 +654,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                    Language Setup                  ║
            ╚════════════════════════════════════════════════════╝
-
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
@@ -692,7 +685,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                    Cpu microcode                   ║
            ╚════════════════════════════════════════════════════╝
-
 "
 # determine processor type and install microcode
 if grep -q "GenuineIntel" /proc/cpuinfo; then
@@ -709,7 +701,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                 Graphics drivers                   ║
            ╚════════════════════════════════════════════════════╝
-
 "
 # Graphics Drivers find and install
 if echo "${gpu_type}" | grep -E "NVIDIA|GeForce"; then
@@ -730,7 +721,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                    Adding User                     ║
            ╚════════════════════════════════════════════════════╝
-
 "
 groupadd libvirt
 useradd -m -G wheel,libvirt -s /bin/bash $USERNAME
@@ -751,9 +741,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                    Grub efi check                  ║
            ╚════════════════════════════════════════════════════╝
-
-Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
 "
 
 if [[ -d "/sys/firmware/efi" ]]; then
@@ -764,7 +751,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                   Theme boot menu                  ║
            ╚════════════════════════════════════════════════════╝
-
 "
 if [[ "${FS}" == "luks" ]]; then
 sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
@@ -795,7 +781,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                   Enabling service                 ║
            ╚════════════════════════════════════════════════════╝
-
 "
 ntpd -qg
 systemctl enable ntpd.service
@@ -814,7 +799,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                      Cleaning                      ║
            ╚════════════════════════════════════════════════════╝
-
 "
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
@@ -826,7 +810,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                Installing extra packages           ║
            ╚════════════════════════════════════════════════════╝
-
 "
 pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion
 echo "  installing usefull tools"
@@ -854,7 +837,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║           Installing Desktop environment           ║
            ╚════════════════════════════════════════════════════╝
-
 "
 if [[ "${DE}" != "none" ]]; then
     # Install X.org if needed
