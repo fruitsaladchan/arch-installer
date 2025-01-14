@@ -432,12 +432,11 @@ timezone
 clear
 keymap
 
-iso=$(curl -4 ifconfig.co/country-iso)
+iso=$(curl --silent -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -Sy
 pacman -S --noconfirm archlinux-keyring
-pacman -S --noconfirm --needed pacman-contrib terminus-font
-setfont ter-v18b
+pacman -S --noconfirm --needed pacman-contrib
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
