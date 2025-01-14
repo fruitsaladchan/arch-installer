@@ -27,7 +27,6 @@ echo -ne "
            ║              Version 1.0 - By fruitsaladchan       ║
            ╚════════════════════════════════════════════════════╝
 
-
 Checking Arch Linux ISO.....
 "
 sleep 1
@@ -146,7 +145,6 @@ filesystem() {
            ╔════════════════════════════════════════════════════╗
            ║                  Select file system                ║
            ╚════════════════════════════════════════════════════╝
-
     "
   options=("btrfs" "ext4" "luks" "exit")
   select_option "${options[@]}"
@@ -172,7 +170,6 @@ timezone() {
            ║ System detected your time zone to be '$time_zone'      ║
            ║ Is this correct?                                       ║
            ╚════════════════════════════════════════════════════════╝
-
     "
   options=("Yes" "No")
   select_option "${options[@]}"
@@ -199,7 +196,6 @@ keymap() {
            ╔════════════════════════════════════════════════════╗
            ║               Select keyboard layout               ║
            ╚════════════════════════════════════════════════════╝
-
     "
   options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru se sg ua uk)
 
@@ -215,7 +211,6 @@ drivessd() {
            ╔════════════════════════════════════════════════════╗
            ║               Is this an ssd? yes/no               ║
            ╚════════════════════════════════════════════════════╝
-
     "
 
   options=("Yes" "No")
@@ -237,13 +232,11 @@ drivessd() {
 
 diskpart() {
   echo -ne "
-
            ╔════════════════════════════════════════════════════╗
            ║  WARNING!!!                                        ║ 
            ║  this will format and wipe all data on the drive   ║
            ╚════════════════════════════════════════════════════╝
-
-"
+    "
 
   PS3='
     Select the disk to install on: '
@@ -304,11 +297,9 @@ userinfo() {
 
 swapsize() {
   echo -ne "
-
            ╔════════════════════════════════════════════════════╗
            ║                      Swap Config                   ║
            ╚════════════════════════════════════════════════════╝
-
 "
   echo -ne "
     Do you want to create a swap partition?
@@ -340,7 +331,6 @@ swapsize() {
 
 desktop_env() {
   echo -ne "
-
            ╔════════════════════════════════════════════════════╗
            ║                Desktop Environment                 ║
            ╚════════════════════════════════════════════════════╝
@@ -386,11 +376,9 @@ desktop_env() {
 display_manager() {
   if [[ "${DE}" != "none" ]]; then
     echo -ne "
-
            ╔════════════════════════════════════════════════════╗
            ║                   Display Manager                  ║
            ╚════════════════════════════════════════════════════╝
-
 "
     echo -ne "
     Select your display manager:
@@ -457,7 +445,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║               Setting up $iso mirrors              ║
            ╚════════════════════════════════════════════════════╝
-
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 if [ ! -d "/mnt" ]; then
@@ -467,14 +454,12 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║              Installing Prerequisites              ║
            ╚════════════════════════════════════════════════════╝
-
 "
 pacman -S --noconfirm --needed gptfdisk btrfs-progs glibc
 echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                  Formatting Disk                   ║
            ╚════════════════════════════════════════════════════╝
-
 "
 umount -A --recursive /mnt
 sgdisk -Z "${DISK}"
@@ -499,7 +484,6 @@ echo -ne "
            ╔════════════════════════════════════════════════════╗
            ║                 Creating Filesystem                ║
            ╚════════════════════════════════════════════════════╝
-
 "
 createsubvolumes() {
   btrfs subvolume create /mnt/@
