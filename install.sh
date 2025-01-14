@@ -193,7 +193,11 @@ timezone() {
 }
 keymap() {
   echo -ne "
-    Please select key board layout from this list"
+           ╔════════════════════════════════════════════════════╗
+           ║               Select keyboard layout               ║
+           ╚════════════════════════════════════════════════════╝
+
+    "
   options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru se sg ua uk)
 
   select_option "${options[@]}"
@@ -205,7 +209,10 @@ keymap() {
 
 drivessd() {
   echo -ne "
-    Is this an ssd? yes/no:
+           ╔════════════════════════════════════════════════════╗
+           ║               Is this an ssd? yes/no               ║
+           ╚════════════════════════════════════════════════════╝
+
     "
 
   options=("Yes" "No")
