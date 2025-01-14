@@ -166,10 +166,10 @@ filesystem() {
 timezone() {
   time_zone="$(curl --silent --fail https://ipapi.co/timezone)"
   echo -ne "
-           ╔════════════════════════════════════════════════════════╗
-           ║ System detected your time zone to be '$time_zone'      ║
-           ║ Is this correct?                                       ║
-           ╚════════════════════════════════════════════════════════╝
+           ╔════════════════════════════════════════════════════════════╗
+           ║ System detected your time zone to be '$time_zone'          ║
+           ║ Is this correct?                                           ║
+           ╚════════════════════════════════════════════════════════════╝
     "
   options=("Yes" "No")
   select_option "${options[@]}"
