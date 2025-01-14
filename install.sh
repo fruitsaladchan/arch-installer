@@ -166,10 +166,10 @@ filesystem() {
   esac
 }
 timezone() {
-  time_zone="$(curl --fail https://ipapi.co/timezone)"
+  time_zone="$(curl --silent --fail https://ipapi.co/timezone)"
   echo -ne "
     System detected your timezone to be '$time_zone' \n"
-  echo -ne "Is this correct?
+        echo -ne "Is this correct?
     "
   options=("Yes" "No")
   select_option "${options[@]}"
