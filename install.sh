@@ -447,7 +447,7 @@ pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
            ╔════════════════════════════════════════════════════╗
-           ║               Setting up $iso mirrors               ║
+           ║               Setting up $iso mirrors              ║
            ╚════════════════════════════════════════════════════╝
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
