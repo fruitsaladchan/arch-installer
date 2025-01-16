@@ -172,7 +172,7 @@ timezone() {
   time_zone="$(curl --silent --fail https://ipapi.co/timezone)"
   echo -ne "
            ╔════════════════════════════════════════════════════════════╗
-           ║ System detected your time zone to be '$time_zone'     ║
+           ║ System detected your time zone to be '$time_zone'          ║
            ║ Is this correct?                                           ║
            ╚════════════════════════════════════════════════════════════╝
     "
@@ -343,13 +343,13 @@ desktop_env() {
   echo -ne "
     Select your desktop environment / window manager:
     "
-  options=("KDE Plasma" "GNOME" "XFCE" "i3" "Hyprland" "None")
+  options=("DWM" "GNOME" "XFCE" "i3" "Hyprland" "None")
   select_option "${options[@]}"
 
   case ${options[$?]} in
-    "KDE Plasma")
-      export DE="kde"
-      export DE_PACKAGES="plasma-meta konsole dolphin ark spectacle gwenview okular plasma-wayland-session"
+    "DWM")
+      export DE="dwm"
+      export DE_PACKAGES="xorg xorg-xinit xdotool libx11 libxinerama libxft base-devel"
       ;;
     "GNOME")
       export DE="gnome"
@@ -870,6 +870,44 @@ if [[ "${DE}" == "hyprland" ]]; then
         xdg-desktop-portal-hyprland \
         qt5-wayland qt6-wayland \
         polkit-kde-agent
+fi
+
+if [[ "${DE}" == "dwm" ]]; then
+    echo "Installing DWM dependencies..."
+    # Install base X.org packages
+    pacman -S --noconfirm --needed ${DE_PACKAGES}
+    
+    # Clone and install your DWM configuration
+    cd /home/$USERNAME
+    sudo -u $USERNAME git clone https://github.com/fruitsaladchan/dwm.git
+    cd dwm
+    
+    # Install additional dependencies with yay
+    sudo -u $USERNAME yay -S --noconfirm kitty pywal xwallpaper picom acpi sysstat wireless_tools zsh flameshot lm_sensors
+
+    # Build and install DWM
+    sudo make clean install
+    
+    # Create xinitrc
+    echo "exec dwm" > /home/$USERNAME/.xinitrc
+    chown $USERNAME:$USERNAME /home/$USERNAME/.xinitrc
+    
+    # Setup additional configurations
+    mkdir -p /home/$USERNAME/.config/kitty
+    cp config/kitty.conf /home/$USERNAME/.config/kitty/
+    mkdir -p /home/$USERNAME/.config/picom
+    cp config/picom.conf /home/$USERNAME/.config/picom/
+    
+    # Setup local bin directory and copy scripts
+    mkdir -p /home/$USERNAME/.local/bin
+    cp scripts/dwmbar.sh /home/$USERNAME/.local/bin/
+    chmod +x /home/$USERNAME/.local/bin/dwmbar.sh
+    
+    # Set proper ownership
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
+    
+    echo "DWM installation completed!"
 fi
 
 EOF
