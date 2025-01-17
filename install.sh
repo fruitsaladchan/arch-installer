@@ -447,7 +447,7 @@ pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
            ╔════════════════════════════════════════════════════╗
-           ║               Setting up $iso mirrors              ║
+           ║               Setting up $iso mirrors               ║
            ╚════════════════════════════════════════════════════╝
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
@@ -872,6 +872,7 @@ if [[ "${DE}" == "hyprland" ]]; then
         polkit-kde-agent
 fi
 
+# DWM
 if [[ "${DE}" == "dwm" ]]; then
     echo "Installing DWM dependencies..."
     # Install base X.org packages
@@ -883,16 +884,18 @@ if [[ "${DE}" == "dwm" ]]; then
     cd dwm
     
     # Install additional dependencies with yay
-    sudo -u $USERNAME yay -S --noconfirm kitty pywal xwallpaper picom acpi sysstat wireless_tools zsh flameshot lm_sensors
+    sudo -u $USERNAME yay -S --noconfirm kitty pywal xwallpaper picom acpi sysstat wireless_tools zsh flameshot lm_sensors ttf-jetbrains-mono-nerd
 
     # Build and install DWM
-    sudo make clean install
+    sudo make 
+    sudo make install
     
     # Create xinitrc
-    echo "exec dwm" > /home/$USERNAME/.xinitrc
+    echo "dwmbar.sh &
+    picom &
+    exec dwm" > /home/$USERNAME/.xinitrc
     chown $USERNAME:$USERNAME /home/$USERNAME/.xinitrc
     
-    # Setup additional configurations
     mkdir -p /home/$USERNAME/.config/kitty
     cp config/kitty.conf /home/$USERNAME/.config/kitty/
     mkdir -p /home/$USERNAME/.config/picom
@@ -903,11 +906,9 @@ if [[ "${DE}" == "dwm" ]]; then
     cp scripts/dwmbar.sh /home/$USERNAME/.local/bin/
     chmod +x /home/$USERNAME/.local/bin/dwmbar.sh
     
-    # Set proper ownership
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
     
-    echo "DWM installation completed!"
 fi
 
 EOF
