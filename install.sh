@@ -447,7 +447,7 @@ pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
            ╔════════════════════════════════════════════════════╗
-           ║               Setting up $iso mirrors               ║
+           ║               Setting up $iso mirrors              ║
            ╚════════════════════════════════════════════════════╝
 "
 reflector -a 48 -c "$iso" -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
@@ -911,6 +911,11 @@ if [[ "${DE}" == "dwm" ]]; then
     
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
+    
+    # Create .bash_profile to auto-start X
+    echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx' > /home/$USERNAME/.bash_profile
+    chown $USERNAME:$USERNAME /home/$USERNAME/.bash_profile
+    chmod 644 /home/$USERNAME/.bash_profile
     
 fi
 
