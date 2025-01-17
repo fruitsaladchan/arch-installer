@@ -900,7 +900,9 @@ if [[ "${DE}" == "dwm" ]]; then
     cp config/kitty.conf /home/$USERNAME/.config/kitty/
     mkdir -p /home/$USERNAME/.config/picom
     cp config/picom.conf /home/$USERNAME/.config/picom/
+    mkdir -p /usr/share/xsessions
     cp config/dwm.desktop /usr/share/xsessions/
+
     
     # Setup local bin directory and copy scripts
     mkdir -p /home/$USERNAME/.local/bin
