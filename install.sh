@@ -892,8 +892,8 @@ if [[ "${DE}" == "dwm" ]]; then
     
     # Create xinitrc
     echo "dwmbar.sh &
-    picom &
-    exec dwm" > /home/$USERNAME/.xinitrc
+picom &
+exec dwm" > /home/$USERNAME/.xinitrc
     chown $USERNAME:$USERNAME /home/$USERNAME/.xinitrc
     
     mkdir -p /home/$USERNAME/.config/kitty
@@ -906,8 +906,10 @@ if [[ "${DE}" == "dwm" ]]; then
     
     # Setup local bin directory and copy scripts
     mkdir -p /home/$USERNAME/.local/bin
+    cp scripts/setbg /home/$USERNAME/.local/bin/
     cp scripts/dwmbar.sh /home/$USERNAME/.local/bin/
     chmod +x /home/$USERNAME/.local/bin/dwmbar.sh
+    chmod +x /home/$USERNAME/.local/bin/setbg
     
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
