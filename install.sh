@@ -900,9 +900,28 @@ exec dwm" > /home/$USERNAME/.xinitrc
     cp config/kitty.conf /home/$USERNAME/.config/kitty/
     mkdir -p /home/$USERNAME/.config/picom
     cp config/picom.conf /home/$USERNAME/.config/picom/
+    
+    # Create and set up DWM desktop entry
     mkdir -p /usr/share/xsessions
-    cp config/dwm.desktop /usr/share/xsessions/
-
+    cat > /usr/share/xsessions/dwm.desktop << EOF
+[Desktop Entry]
+Encoding=UTF-8
+Name=DWM
+Comment=Dynamic Window Manager
+Exec=/usr/local/bin/dwm
+Icon=dwm
+Type=XSession
+EOF
+    chmod 644 /usr/share/xsessions/dwm.desktop
+    
+    # Create DWM session starter script
+    cat > /usr/local/bin/dwm-start << EOF
+#!/bin/sh
+dwmbar.sh &
+picom &
+exec dwm
+EOF
+    chmod +x /usr/local/bin/dwm-start
     
     # Setup local bin directory and copy scripts
     mkdir -p /home/$USERNAME/.local/bin
@@ -911,14 +930,18 @@ exec dwm" > /home/$USERNAME/.xinitrc
     chmod +x /home/$USERNAME/.local/bin/dwmbar.sh
     chmod +x /home/$USERNAME/.local/bin/setbg
     
+    # Add scripts directory to PATH
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> /home/$USERNAME/.bashrc
+    
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
     
-    # Create .bash_profile to auto-start X
-    echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx' > /home/$USERNAME/.bash_profile
-    chown $USERNAME:$USERNAME /home/$USERNAME/.bash_profile
-    chmod 644 /home/$USERNAME/.bash_profile
-    
+    # Only create .bash_profile if no display manager is selected
+    if [[ -z "${DM}" ]]; then
+        echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx' > /home/$USERNAME/.bash_profile
+        chown $USERNAME:$USERNAME /home/$USERNAME/.bash_profile
+        chmod 644 /home/$USERNAME/.bash_profile
+    fi
 fi
 
 EOF
