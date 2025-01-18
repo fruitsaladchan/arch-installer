@@ -913,7 +913,7 @@ if [[ "${DE}" == "dwm" ]]; then
     chown -R $USERNAME:$USERNAME /home/$USERNAME/.local
     
     # Create .bash_profile to auto-start X
-    echo ' && exec startx' > /home/$USERNAME/.bash_profile
+    echo '[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx' > /home/$USERNAME/.bash_profile
     chown $USERNAME:$USERNAME /home/$USERNAME/.bash_profile
     chmod 644 /home/$USERNAME/.bash_profile
     
