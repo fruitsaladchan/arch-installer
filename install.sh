@@ -917,36 +917,6 @@ if [[ "${DE}" == "dwm" ]]; then
     chown $USERNAME:$USERNAME /home/$USERNAME/.bash_profile
     chmod 644 /home/$USERNAME/.bash_profile
     
-    # Create a startup script for DWM
-    cat > /usr/local/bin/dwm-start << EOF
-#!/bin/sh
-# DWM startup script
-[ -f ~/.xprofile ] && . ~/.xprofile
-[ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
-
-# Start essential background services
-dwmbar.sh &
-picom &
-
-# Execute DWM
-exec dwm
-EOF
-
-    # Make the startup script executable
-    chmod +x /usr/local/bin/dwm-start
-
-    # Create .xprofile for environment variables and autostart
-    cat > /home/$USERNAME/.xprofile << EOF
-#!/bin/sh
-# Set environment variables
-export PATH="\$HOME/.local/bin:\$PATH"
-EOF
-
-    chmod +x /home/$USERNAME/.xprofile
-    chown $USERNAME:$USERNAME /home/$USERNAME/.xprofile
-
-    # Update the dwm.desktop file to use the startup script
-    sed -i 's/^Exec=.*/Exec=dwm-start/' /usr/share/xsessions/dwm.desktop
 fi
 
 EOF
