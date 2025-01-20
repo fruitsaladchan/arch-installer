@@ -815,7 +815,7 @@ echo -ne "
            ║                Installing extra packages           ║
            ╚════════════════════════════════════════════════════╝
 "
-pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion dmidecode jq util-linux
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion dmidecode jq util-linux go rust python-pip
 echo "  installing usefull tools"
 xdg-user-dirs-update
 curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan/bashrc/refs/heads/main/.bashrc
