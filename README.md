@@ -17,11 +17,12 @@
   - sd
   - bat
   - nettools
+  - go, pip, rust
 
 - install my [bashrc](https://github.com/fruitsaladchan/bashrc/tree/main)
 - install yay
 
-- enable services such as
+- enable services
   - ssh
   - ntp
   - network manager
