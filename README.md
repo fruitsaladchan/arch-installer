@@ -1,4 +1,5 @@
 # arch-installer
+- this script is more personal as it installs stuff that i personally like / use
 
 ## what it will do
 
