@@ -441,7 +441,7 @@ iso=$(curl --silent -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -Sy
 pacman -S --noconfirm archlinux-keyring
-pacman -S --noconfirm --needed pacman-contrib 
+pacman -S --noconfirm --needed pacman-contrib
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
@@ -815,7 +815,7 @@ echo -ne "
            ║                Installing extra packages           ║
            ╚════════════════════════════════════════════════════╝
 "
-pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion dmidecode jq util-linux go rust python-pip
+pacman -S --noconfirm --needed fd fzf ripgrep sd neovim eza bat net-tools fastfetch btop htop xdg-user-dirs bash-completion dmidecode jq util-linux go rust python-pip rsync
 echo "  installing usefull tools"
 xdg-user-dirs-update
 curl -o /home/$USERNAME/.bashrc https://raw.githubusercontent.com/fruitsaladchan/bashrc/refs/heads/main/.bashrc
